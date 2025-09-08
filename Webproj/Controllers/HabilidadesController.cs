@@ -9,23 +9,22 @@ using Webproj.Models;
 
 namespace Webproj.Controllers
 {
-    public class PersonagensController : Controller
+    public class HabilidadesController : Controller
     {
         private readonly Contexto _context;
 
-        public PersonagensController(Contexto context)
+        public HabilidadesController(Contexto context)
         {
             _context = context;
         }
 
-        // GET: Personagens
+        // GET: Habilidades
         public async Task<IActionResult> Index()
         {
-            var contexto = _context.Personagens.Include(p => p.Universo).Include(p => p.Usuario);
-            return View(await contexto.ToListAsync());
+            return View(await _context.Habilidades.ToListAsync());
         }
 
-        // GET: Personagens/Details/5
+        // GET: Habilidades/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,45 +32,39 @@ namespace Webproj.Controllers
                 return NotFound();
             }
 
-            var personagem = await _context.Personagens
-                .Include(p => p.Universo)
-                .Include(p => p.Usuario)
+            var habilidade = await _context.Habilidades
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (personagem == null)
+            if (habilidade == null)
             {
                 return NotFound();
             }
 
-            return View(personagem);
+            return View(habilidade);
         }
 
-        // GET: Personagens/Create
+        // GET: Habilidades/Create
         public IActionResult Create()
         {
-            ViewData["UniversoId"] = new SelectList(_context.Universos, "Id", "Nome");
-            ViewData["UsuarioId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
-        // POST: Personagens/Create
+        // POST: Habilidades/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Descricao,DataCriacao,UniversoId,UsuarioId")] Personagem personagem)
+        public async Task<IActionResult> Create([Bind("Id,Nome")] Habilidade habilidade)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(personagem);
+                _context.Add(habilidade);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UniversoId"] = new SelectList(_context.Universos, "Id", "Nome", personagem.UniversoId);
-            ViewData["UsuarioId"] = new SelectList(_context.Users, "Id", "Id", personagem.UsuarioId);
-            return View(personagem);
+            return View(habilidade);
         }
 
-        // GET: Personagens/Edit/5
+        // GET: Habilidades/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -79,24 +72,22 @@ namespace Webproj.Controllers
                 return NotFound();
             }
 
-            var personagem = await _context.Personagens.FindAsync(id);
-            if (personagem == null)
+            var habilidade = await _context.Habilidades.FindAsync(id);
+            if (habilidade == null)
             {
                 return NotFound();
             }
-            ViewData["UniversoId"] = new SelectList(_context.Universos, "Id", "Nome", personagem.UniversoId);
-            ViewData["UsuarioId"] = new SelectList(_context.Users, "Id", "Id", personagem.UsuarioId);
-            return View(personagem);
+            return View(habilidade);
         }
 
-        // POST: Personagens/Edit/5
+        // POST: Habilidades/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Descricao,DataCriacao,UniversoId,UsuarioId")] Personagem personagem)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome")] Habilidade habilidade)
         {
-            if (id != personagem.Id)
+            if (id != habilidade.Id)
             {
                 return NotFound();
             }
@@ -105,12 +96,12 @@ namespace Webproj.Controllers
             {
                 try
                 {
-                    _context.Update(personagem);
+                    _context.Update(habilidade);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PersonagemExists(personagem.Id))
+                    if (!HabilidadeExists(habilidade.Id))
                     {
                         return NotFound();
                     }
@@ -121,12 +112,10 @@ namespace Webproj.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UniversoId"] = new SelectList(_context.Universos, "Id", "Nome", personagem.UniversoId);
-            ViewData["UsuarioId"] = new SelectList(_context.Users, "Id", "Id", personagem.UsuarioId);
-            return View(personagem);
+            return View(habilidade);
         }
 
-        // GET: Personagens/Delete/5
+        // GET: Habilidades/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -134,36 +123,34 @@ namespace Webproj.Controllers
                 return NotFound();
             }
 
-            var personagem = await _context.Personagens
-                .Include(p => p.Universo)
-                .Include(p => p.Usuario)
+            var habilidade = await _context.Habilidades
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (personagem == null)
+            if (habilidade == null)
             {
                 return NotFound();
             }
 
-            return View(personagem);
+            return View(habilidade);
         }
 
-        // POST: Personagens/Delete/5
+        // POST: Habilidades/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var personagem = await _context.Personagens.FindAsync(id);
-            if (personagem != null)
+            var habilidade = await _context.Habilidades.FindAsync(id);
+            if (habilidade != null)
             {
-                _context.Personagens.Remove(personagem);
+                _context.Habilidades.Remove(habilidade);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PersonagemExists(int id)
+        private bool HabilidadeExists(int id)
         {
-            return _context.Personagens.Any(e => e.Id == id);
+            return _context.Habilidades.Any(e => e.Id == id);
         }
     }
 }
